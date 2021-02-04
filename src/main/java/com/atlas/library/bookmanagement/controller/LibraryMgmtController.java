@@ -5,6 +5,7 @@ import com.atlas.library.bookmanagement.model.Client;
 import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.service.BookMgmtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/atlas/library/mgmt/v1")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -36,15 +38,16 @@ public class LibraryMgmtController {
         return (requestedBook.isPresent()) ? new ResponseEntity<>(requestedBook, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/books/")
+    @GetMapping("/books")
     public ResponseEntity<?> getLibraryBooks(@RequestParam(value = "books") List<Integer> bookIds,
-                                             @RequestParam(value = "title", required = false, defaultValue = "") String bookTitle,
-                                             @RequestParam(value = "author", required = false, defaultValue = "") String author) {
+                                             @RequestParam(value = "author", required = false, defaultValue = "") String author,
+                                             @RequestParam(value = "publisherName", required = false, defaultValue = "") String publisherName) {
 
         List<Book> requestedBooks = new ArrayList<>();
         bookIds.forEach(bookId -> {
-            val requestedBook = bookService.getLibraryBook(bookId, bookTitle, author);
+            val requestedBook = bookService.getLibraryBook(bookId, publisherName, author);
             requestedBook.ifPresent(requestedBooks::add);
+            log.info("requestedBooks array size={}", requestedBooks.size());
         });
 
         return (!requestedBooks.isEmpty()) ? new ResponseEntity<>(requestedBooks, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -28,14 +28,21 @@ public class BookMgmtService {
         return bookRepository.findById(bookId);
     }
 
-    public Optional<Book> getLibraryBook(int bookId, String bookTitle, String bookAuthor) {
-        log.info("you are getting a book with bookId={}, title={}, and author={}", bookId, bookTitle, bookAuthor);
-        return bookRepository.findByBookIdAndTitleAndAuthor(bookId, bookTitle, bookAuthor);
+    public Optional<Book> getLibraryBook(int bookId, String publisherName, String bookAuthor) {
+        log.info("you are getting a book with bookId={}, publisherName={}, and author={}", bookId, publisherName, bookAuthor);
+        if(publisherName.isEmpty() && bookAuthor.isEmpty()) {
+            return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, null, null);
+        } else if (bookAuthor.isEmpty()){
+            return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, publisherName, null);
+        } else if (publisherName.isEmpty()){
+            return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, null, bookAuthor);
+        }
+        return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, publisherName, bookAuthor);
     }
 
     public Book createNewLibraryBook(Requests.CreateBookModel createBookModel) {
         // first check to see if book already exists in DB
-        val bookCheck = bookRepository.findByISBN(createBookModel.getIsbn());
+        val bookCheck = bookRepository.findByBookIdAndISBN(createBookModel.getBookId(), createBookModel.getIsbn());
         if((bookCheck).isPresent()) {
             val existingBook = bookCheck.get();
             int currentNumberOfCopies = existingBook.getNumberOfCopies();
