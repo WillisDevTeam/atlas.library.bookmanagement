@@ -1,6 +1,7 @@
 package com.atlas.library.bookmanagement.model.web;
 
 import com.atlas.library.bookmanagement.model.Book;
+import com.atlas.library.bookmanagement.model.BookCheckout;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
@@ -39,7 +40,16 @@ public class Requests {
         private double accountBalance;
     }
 
-    public static Book ofCreate(Requests.CreateBookModel createBookModel) {
+    @Data
+    @Builder
+    public static class CreateBookCheckoutModel {
+        private int bookCheckoutId;
+        private int bookId;
+        private int clientId;
+        private LocalDateTime dueDate;
+    }
+
+    public static Book ofBookCreate(CreateBookModel createBookModel) {
         return Book.builder()
                 .bookId(createBookModel.getBookId())
                 .ISBN(createBookModel.getIsbn())
@@ -49,6 +59,15 @@ public class Requests {
                 .cost(createBookModel.getCost())
                 .publisherName(createBookModel.getPublisherName())
                 .publishDate(createBookModel.getPublishDate())
+                .build();
+    }
+
+    public static BookCheckout ofBookCheckoutCreate(CreateBookCheckoutModel createBookCheckoutModel) {
+        return BookCheckout.builder()
+                .bookCheckoutId(createBookCheckoutModel.getBookCheckoutId())
+                .bookId(createBookCheckoutModel.bookId)
+                .userId(createBookCheckoutModel.clientId)
+                .dueDate(createBookCheckoutModel.getDueDate())
                 .build();
     }
 }

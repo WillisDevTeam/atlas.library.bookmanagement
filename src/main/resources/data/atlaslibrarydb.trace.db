@@ -497,3 +497,10 @@ call next value for hibernate_sequence [90036-200]
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.lang.Thread.run(Thread.java:748)
+2021-02-04 08:20:44 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM BOOK 
+SELECT[*] * FROM BOOK_CHECKOUT 
+SELECT * FROM CLIENT"; SQL statement:
+SELECT * FROM BOOK 
+SELECT * FROM BOOK_CHECKOUT 
+SELECT * FROM CLIENT [42000-200]

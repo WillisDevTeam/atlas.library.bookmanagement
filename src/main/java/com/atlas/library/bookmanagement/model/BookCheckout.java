@@ -24,13 +24,13 @@ public class BookCheckout {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long bookCheckoutId;
+    private int bookCheckoutId;
 
     @Column(nullable = false)
     private int bookId;
 
     @Column(nullable = false)
-    private int clientId;
+    private int userId;
 
     private boolean renewable;
 

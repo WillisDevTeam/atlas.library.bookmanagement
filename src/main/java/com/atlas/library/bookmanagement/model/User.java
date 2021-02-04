@@ -18,13 +18,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "client")
-public class Client {
+@Table(name = "user")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CLIENT_ID")
-    private int clientId;
+    @Column(name = "USER_ID")
+    private int userId;
 
     @Column(nullable = false, name = "FIRST_NAME")
     private String firstName;

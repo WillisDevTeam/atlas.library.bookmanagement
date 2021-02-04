@@ -1,7 +1,7 @@
 package com.atlas.library.bookmanagement.controller;
 
 import com.atlas.library.bookmanagement.model.Book;
-import com.atlas.library.bookmanagement.model.Client;
+import com.atlas.library.bookmanagement.model.User;
 import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.service.BookMgmtService;
 import lombok.RequiredArgsConstructor;
@@ -81,14 +81,14 @@ public class LibraryMgmtController {
     }
 
     @PostMapping("/client/")
-    public ResponseEntity<?> createLibraryClient(@RequestBody Client client) {
-        bookService.createNewClient(client);
+    public ResponseEntity<?> createLibraryClient(@RequestBody User user) {
+        bookService.createNewClient(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/client/{clientId}")
-    public ResponseEntity<?> updateLibraryClient(@PathVariable("clientId") final int clientId, @RequestBody Client client) {
-        val updatedClient = bookService.updateClient(clientId, client);
+    public ResponseEntity<?> updateLibraryClient(@PathVariable("clientId") final int clientId, @RequestBody User user) {
+        val updatedClient = bookService.updateClient(clientId, user);
         return (updatedClient.isPresent()) ? new ResponseEntity<>(updatedClient, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

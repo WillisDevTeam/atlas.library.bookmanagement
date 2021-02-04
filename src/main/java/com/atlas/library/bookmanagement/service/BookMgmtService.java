@@ -2,10 +2,11 @@ package com.atlas.library.bookmanagement.service;
 
 import com.atlas.library.bookmanagement.model.Book;
 import com.atlas.library.bookmanagement.model.BookCheckout;
-import com.atlas.library.bookmanagement.model.Client;
+import com.atlas.library.bookmanagement.model.User;
 import com.atlas.library.bookmanagement.model.web.Requests;
+import com.atlas.library.bookmanagement.repository.BookCheckoutRepository;
 import com.atlas.library.bookmanagement.repository.BookRepository;
-import com.atlas.library.bookmanagement.repository.ClientRepository;
+import com.atlas.library.bookmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,7 +22,8 @@ import java.util.Optional;
 public class BookMgmtService {
 
     private final BookRepository bookRepository;
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
+    private final BookCheckoutRepository bookCheckoutRepository;
 
     public Optional<Book> getLibraryBook(int bookId) {
         log.info("you are getting a book with bookId={}", bookId);
@@ -42,9 +44,9 @@ public class BookMgmtService {
 
     public Book createNewLibraryBook(Requests.CreateBookModel createBookModel) {
         // first check to see if book already exists in DB
-        val bookCheck = bookRepository.findByBookIdAndISBN(createBookModel.getBookId(), createBookModel.getIsbn());
-        if((bookCheck).isPresent()) {
-            val existingBook = bookCheck.get();
+        val bookAudit = bookRepository.findByBookIdAndISBN(createBookModel.getBookId(), createBookModel.getIsbn());
+        if(bookAudit.isPresent()) {
+            val existingBook = bookAudit.get();
             int currentNumberOfCopies = existingBook.getNumberOfCopies();
             log.info("Book with isbn={} already exists in DB, increasing numberOfCopies by one.", existingBook.getISBN());
 
@@ -55,8 +57,9 @@ public class BookMgmtService {
             return bookRepository.save(existingBook);
         }
 
-        log.info("Creating a new book with bookid = title={}", createBookModel.getTitle());
-        val newBook = Requests.ofCreate(createBookModel);
+        Book newBook = Requests.ofBookCreate(createBookModel);
+        log.info("Creating a new book with bookId={} title={}, author={}, publisher={}", newBook.getBookId(), newBook.getTitle(), newBook.getAuthor(), newBook.getPublisherName());
+
         newBook.setAvailable(true);
         newBook.setNumberOfCopies(1);
         newBook.setModificationDate(LocalDateTime.now());
@@ -65,10 +68,10 @@ public class BookMgmtService {
     }
 
     public Optional<Book> updateLibraryBook(int bookId, Double bookCost) {
-        log.info("you are attempting to update a book with bookId={}, cost={}", bookId, bookCost);
-        val bookCheck = bookRepository.findById(bookId);
-        if((bookCheck).isPresent()) {
-            val existingBookToUpdate = bookCheck.get();
+        log.info("Attempting to update a book with bookId={}, cost={}", bookId, bookCost);
+        val bookAudit = bookRepository.findById(bookId);
+        if(bookAudit.isPresent()) {
+            val existingBookToUpdate = bookAudit.get();
             log.info("Library book was found, attempting to update the book");
             existingBookToUpdate.setCost(bookCost);
             existingBookToUpdate.setModificationDate(LocalDateTime.now());
@@ -82,30 +85,74 @@ public class BookMgmtService {
         bookRepository.deleteById(bookId);
     }
 
-    public Optional<Client> getClient(int clientId) {
+    public Optional<User> getUser(int clientId) {
         log.info("you are getting a book with bookId={}", clientId);
-        return clientRepository.findById(clientId);
+        return userRepository.findById(clientId);
     }
 
-    public Client createNewClient(Client client) {
-        log.info("you are creating a new client with firstName={} lastName={}", client.getFirstName(), client.getLastName());
-        return clientRepository.save(client);
+    public User createNewUser(User user) {
+        log.info("you are creating a new client with firstName={} lastName={}", user.getFirstName(), user.getLastName());
+        return userRepository.save(user);
     }
 
-    public Optional<Client> updateClient(int clientId, Client client) {
-        log.info("you are attempting to update a book creating a new book with firstName={} lastName={}", client.getFirstName(), client.getLastName());
+    public Optional<User> updateUser(int clientId, User user) {
+        log.info("you are attempting to update a book creating a new book with firstName={} lastName={}", user.getFirstName(), user.getLastName());
         if (getLibraryBook(clientId).isPresent()) {
-            return Optional.of(clientRepository.save(client));
+            return Optional.of(userRepository.save(user));
         }
         return Optional.empty();
     }
 
-    public void deleteClient(int clientId) {
+    public void deleteUser(int clientId) {
         log.info("you are deleting a client with clientId={}", clientId);
-        clientRepository.deleteById(clientId);
+        userRepository.deleteById(clientId);
     }
 
-    public Optional<BookCheckout> getBookCheckout(String bookCheckoutId) {
+    public Optional<BookCheckout> getBookCheckout(int bookCheckoutId) {
+        log.info("you are getting a bookCheckout with bookCheckoutId={}", bookCheckoutId);
+        return bookCheckoutRepository.findById(bookCheckoutId);
+    }
+
+    public Optional<BookCheckout> createBookCheckout(Requests.CreateBookCheckoutModel createBookCheckoutModel) {
+        // first check to see if it exists in the DB
+        Optional<BookCheckout> bookCheckoutAudit = bookCheckoutRepository.findById(createBookCheckoutModel.getBookCheckoutId());
+        if(bookCheckoutAudit.isPresent()) {
+            BookCheckout existingBookCheckout = bookCheckoutAudit.get();
+            log.info("Book Checkout already exists in the db with bookCheckoutId={}. Returning existing book", existingBookCheckout.getBookCheckoutId());
+            return Optional.empty();
+        }
+
+        BookCheckout newBookCheckout = Requests.ofBookCheckoutCreate(createBookCheckoutModel);
+        log.info("Creating a new Book Checkout with bookCheckoutId={}, bookId={}, clientId={}", newBookCheckout.getBookCheckoutId(), newBookCheckout.getBookId(), newBookCheckout.getUserId());
+        newBookCheckout.setRenewable(true);
+        newBookCheckout.setCreationDate(LocalDateTime.now());
+        newBookCheckout.setModificationDate(LocalDateTime.now());
+        return Optional.of(bookCheckoutRepository.save(newBookCheckout));
+    }
+
+    public Optional<BookCheckout> updateBookCheckoutDueDate(int bookCheckoutId) {
+        // first check to see if it exists in the DB
+        Optional<BookCheckout> bookCheckoutAudit = bookCheckoutRepository.findById(bookCheckoutId);
+        if(bookCheckoutAudit.isPresent() && bookCheckoutAudit.get().isRenewable()) {
+            BookCheckout existingBookCheckout = bookCheckoutAudit.get();
+            log.info("Successfully found Book Checkout in the db with bookCheckoutId={}. Attempting to Extend dueDate", existingBookCheckout.getBookCheckoutId());
+
+            //perform logic to extend dueDate by 7 days and set renewable to false
+            existingBookCheckout.setDueDate(existingBookCheckout.getDueDate().plusDays(7));
+            existingBookCheckout.setRenewable(false);
+
+            return Optional.of(bookCheckoutRepository.save(existingBookCheckout));
+        } else if (bookCheckoutAudit.isPresent()) {
+            BookCheckout existingBookCheckout = bookCheckoutAudit.get();
+            log.info("BookCheckout has already been renewed for bookCheckoutId={}, bookId={}, clientId={}", existingBookCheckout.getBookCheckoutId(), existingBookCheckout.getBookId(), existingBookCheckout.getUserId());
+            return Optional.of(existingBookCheckout);
+        }
+
         return Optional.empty();
+    }
+
+    public void deleteBookCheckout(int bookCheckoutId) {
+        log.info("Attempting to delete a bookCheckout with bookCheckoutId={}", bookCheckoutId);
+        bookCheckoutRepository.deleteById(bookCheckoutId);
     }
 }
