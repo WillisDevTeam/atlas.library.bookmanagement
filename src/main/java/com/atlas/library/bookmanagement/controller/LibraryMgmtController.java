@@ -2,8 +2,10 @@ package com.atlas.library.bookmanagement.controller;
 
 import com.atlas.library.bookmanagement.model.Book;
 import com.atlas.library.bookmanagement.model.Client;
+import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.service.BookMgmtService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/atlas/library/mgmt/v1")
@@ -27,50 +31,67 @@ public class LibraryMgmtController {
 
     @GetMapping("/book/{bookId}")
     public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final int bookId) {
-        Optional<Book> requestedBook = bookService.getLibraryBook(bookId);
+        val requestedBook = bookService.getLibraryBook(bookId);
 
-        return new ResponseEntity<>(requestedBook, HttpStatus.OK);
+        return (requestedBook.isPresent()) ? new ResponseEntity<>(requestedBook, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/books/")
+    public ResponseEntity<?> getLibraryBooks(@RequestParam(value = "books") List<Integer> bookIds,
+                                             @RequestParam(value = "title", required = false, defaultValue = "") String bookTitle,
+                                             @RequestParam(value = "author", required = false, defaultValue = "") String author) {
+
+        List<Book> requestedBooks = new ArrayList<>();
+        bookIds.forEach(bookId -> {
+            val requestedBook = bookService.getLibraryBook(bookId, bookTitle, author);
+            requestedBook.ifPresent(requestedBooks::add);
+        });
+
+        return (!requestedBooks.isEmpty()) ? new ResponseEntity<>(requestedBooks, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // TO DO: implement method to get books with filter
 
     @PostMapping("/book")
-    public ResponseEntity<?> createLibraryBook(@RequestBody Book book) {
+    public ResponseEntity<?> createLibraryBook(@RequestBody Requests.CreateBookModel createBookModel) {
+        val newLibraryBook = bookService.createNewLibraryBook(createBookModel);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(newLibraryBook, HttpStatus.OK);
     }
 
-    @PutMapping("/book/{bookId}")
-    public ResponseEntity<?> updateLibraryBook(@PathVariable("bookId") final String bookId, @RequestBody Book book) {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/book/{bookId}/{bookCost}")
+    public ResponseEntity<?> updateLibraryBook(@PathVariable("bookId") final int bookId, @PathVariable("bookCost") final double bookCost) {
+        val requestedBook = bookService.updateLibraryBook(bookId, bookCost);
+        return (requestedBook.isPresent()) ? new ResponseEntity<>(requestedBook, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/book/{bookId}")
-    public ResponseEntity<?> deleteLibraryBook(@PathVariable("bookId") final String bookId) {
-
+    public ResponseEntity<?> deleteLibraryBook(@PathVariable("bookId") final int bookId) {
+        bookService.deleteLibraryBook(bookId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<?> getLibraryClient(@PathVariable("clientId") final String clientId) {
-
+    public ResponseEntity<?> getLibraryClient(@PathVariable("clientId") final int clientId) {
+        bookService.getClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/client/")
     public ResponseEntity<?> createLibraryClient(@RequestBody Client client) {
-
+        bookService.createNewClient(client);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/client/{clientId}")
-    public ResponseEntity<?> updateLibraryClient(@PathVariable("clientId") final String clientId, @RequestBody Client client) {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> updateLibraryClient(@PathVariable("clientId") final int clientId, @RequestBody Client client) {
+        val updatedClient = bookService.updateClient(clientId, client);
+        return (updatedClient.isPresent()) ? new ResponseEntity<>(updatedClient, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/client/{clientId}")
-    public ResponseEntity<?> deleteLibraryClient(@PathVariable("clientId") final String clientId) {
-
+    public ResponseEntity<?> deleteLibraryClient(@PathVariable("clientId") final int clientId) {
+        bookService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -6,8 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.ZonedDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -30,11 +35,11 @@ public class BookCheckout {
     private boolean renewable;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime dueDate;
+    private LocalDateTime dueDate;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime creationDate;
+    private LocalDateTime creationDate;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime modificationDate;
+    private LocalDateTime modificationDate;
 }

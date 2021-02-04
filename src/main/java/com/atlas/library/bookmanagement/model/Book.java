@@ -5,23 +5,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.ZonedDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "book")
+@Table(name = "BOOK")
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int bookId;
 
     @Column(unique = true)
-    private String isbn;
+    private String ISBN;
 
     @Column(nullable = false)
     private String title;
@@ -40,12 +42,11 @@ public class Book {
     private String publisherName;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime publishDate;
+    private LocalDateTime publishDate;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime creationDate;
+    private LocalDateTime creationDate;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime modificationDate;
-
+    private LocalDateTime modificationDate;
 }
