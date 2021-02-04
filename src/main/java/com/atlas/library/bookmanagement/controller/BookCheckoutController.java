@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Optional;
+
 @Controller
-@RequestMapping("/atlas/library/v1")
+@RequestMapping("/atlas/library/checkout/v1")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookCheckoutController {
 
@@ -25,6 +27,7 @@ public class BookCheckoutController {
 
     @GetMapping("/{bookCheckoutId}")
     public ResponseEntity<?> getBookCheckout(@PathVariable("bookCheckoutId") final String bookCheckoutId) {
+        Optional<BookCheckout> bookCheckout = bookService.getBookCheckout(bookCheckoutId);
 
         return new ResponseEntity<>(HttpStatus.OK);
 

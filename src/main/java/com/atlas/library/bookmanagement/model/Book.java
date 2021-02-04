@@ -18,7 +18,7 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long bookId;
+    private int bookId;
 
     @Column(unique = true)
     private String isbn;

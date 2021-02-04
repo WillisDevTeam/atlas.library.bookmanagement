@@ -2,6 +2,8 @@ package com.atlas.library.bookmanagement.repository;
 
 import com.atlas.library.bookmanagement.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface BookMgmtRepository extends JpaRepository<Book, String> {
+@Repository
+public interface BookRepository extends JpaRepository<Book, Integer> {
 }

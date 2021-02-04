@@ -22,9 +22,10 @@ public class BookCheckout {
     private Long bookCheckoutId;
 
     @Column(nullable = false)
-    private Book book;
+    private int bookId;
 
-    private Client client;
+    @Column(nullable = false)
+    private int clientId;
 
     private boolean renewable;
 

@@ -16,56 +16,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
-@RequestMapping("/atlas/library/v1")
+@RequestMapping("/atlas/library/mgmt/v1")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LibraryMgmtController {
 
     private final BookMgmtService bookService;
 
-    @GetMapping("/{bookId}")
-    public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final String bookId) {
+    @GetMapping("/book/{bookId}")
+    public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final int bookId) {
+        Optional<Book> requestedBook = bookService.getLibraryBook(bookId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(requestedBook, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/book")
     public ResponseEntity<?> createLibraryBook(@RequestBody Book book) {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{bookId}")
+    @PutMapping("/book/{bookId}")
     public ResponseEntity<?> updateLibraryBook(@PathVariable("bookId") final String bookId, @RequestBody Book book) {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{bookId}")
+    @DeleteMapping("/book/{bookId}")
     public ResponseEntity<?> deleteLibraryBook(@PathVariable("bookId") final String bookId) {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{clientId}")
+    @GetMapping("/client/{clientId}")
     public ResponseEntity<?> getLibraryClient(@PathVariable("clientId") final String clientId) {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/client/")
     public ResponseEntity<?> createLibraryClient(@RequestBody Client client) {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{clientId}")
+    @PutMapping("/client/{clientId}")
     public ResponseEntity<?> updateLibraryClient(@PathVariable("clientId") final String clientId, @RequestBody Client client) {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{clientId}")
+    @DeleteMapping("/client/{clientId}")
     public ResponseEntity<?> deleteLibraryClient(@PathVariable("clientId") final String clientId) {
 
         return new ResponseEntity<>(HttpStatus.OK);
