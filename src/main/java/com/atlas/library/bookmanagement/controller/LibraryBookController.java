@@ -38,7 +38,7 @@ public class LibraryBookController {
 
         if (requestedBook.isPresent()) {
             EntityModel<Book> resource = EntityModel.of(requestedBook.get());
-            resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBook(bookId, 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
+            resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBookCost(bookId, 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
             resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).deleteLibraryBook(bookId)).withRel("Delete Book"));
             return new ResponseEntity<>(resource, HttpStatus.OK);
         }
@@ -53,14 +53,14 @@ public class LibraryBookController {
                                              @RequestParam(value = "genre", required = false, defaultValue = "") List<String> genre,
                                              @RequestParam(value = "publisherName", required = false, defaultValue = "") List<String> publisherName) {
 
-        List<Book> requestedBooksList = bookService.getLibraryBook(bookIds, title, bookAuthor, genre, publisherName);
+        List<Book> requestedBooksList = bookService.getAllLibraryBooks(bookIds, title, bookAuthor, genre, publisherName);
 
         if(!requestedBooksList.isEmpty()) {
             List<EntityModel<Book>> responseList = new ArrayList<>();
 
             requestedBooksList.stream().forEach(book -> {
                 EntityModel<Book> resource = EntityModel.of(book);
-                resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBook(book.getBookId(), 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
+                resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBookCost(book.getBookId(), 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
                 resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).deleteLibraryBook(book.getBookId())).withRel("Delete Book"));
                 responseList.add(resource);
             });
@@ -77,13 +77,13 @@ public class LibraryBookController {
 
         EntityModel<Book> resource = EntityModel.of(newLibraryBook);
         resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getLibraryBook(newLibraryBook.getBookId())).withRel("Get the new Book record"));
-        resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBook(newLibraryBook.getBookId(), 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
+        resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBookCost(newLibraryBook.getBookId(), 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
         resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).deleteLibraryBook(newLibraryBook.getBookId())).withRel("Delete Book"));
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
     @PutMapping("/{bookId}/{bookCost}")
-    public ResponseEntity<?> updateLibraryBook(@PathVariable("bookId") final String bookId, @PathVariable("bookCost") final double bookCost) {
+    public ResponseEntity<?> updateLibraryBookCost(@PathVariable("bookId") final String bookId, @PathVariable("bookCost") final double bookCost) {
         val requestedBook = bookService.updateLibraryBook(bookId, bookCost);
 
         if (requestedBook.isPresent()) {
