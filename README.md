@@ -2,10 +2,9 @@
 
 This service is to be used as an example of a working backend for a public libaray.
 This service will be used to manage the following: 
-
-    - Books within the Atlas Library
-    - Users of the Atlas Library
-    - The Book Checkout process 
+- Books within the Atlas Library
+- Users of the Atlas Library
+- The Book Checkout process 
 
 ## Assumptions
 As this is a simple project, some assumptions had to be made and will be outlined below.
