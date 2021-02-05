@@ -3,7 +3,7 @@ package com.atlas.library.bookmanagement.controller;
 import com.atlas.library.bookmanagement.model.Book;
 import com.atlas.library.bookmanagement.model.User;
 import com.atlas.library.bookmanagement.model.web.Requests;
-import com.atlas.library.bookmanagement.service.BookMgmtService;
+import com.atlas.library.bookmanagement.service.LibraryMgmtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LibraryMgmtController {
 
-    private final BookMgmtService bookService;
+    private final LibraryMgmtService bookService;
 
     @GetMapping("/book/{bookId}")
     public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final String bookId) {
@@ -38,12 +38,13 @@ public class LibraryMgmtController {
     }
 
     @GetMapping("/books")
-    public ResponseEntity<?> getLibraryBooks(@RequestParam(value = "title", required = false, defaultValue = "") List<String> title,
+    public ResponseEntity<?> getLibraryBooks(@RequestParam(value = "bookIds", required = false, defaultValue = "") List<String> bookIds,
+                                             @RequestParam(value = "title", required = false, defaultValue = "") List<String> title,
                                              @RequestParam(value = "bookAuthor", required = false, defaultValue = "") List<String> bookAuthor,
                                              @RequestParam(value = "genre", required = false, defaultValue = "") List<String> genre,
                                              @RequestParam(value = "publisherName", required = false, defaultValue = "") List<String> publisherName) {
 
-        List<Book> requestedBooks = bookService.getLibraryBook(title, bookAuthor, genre, publisherName);
+        List<Book> requestedBooks = bookService.getLibraryBook(bookIds, title, bookAuthor, genre, publisherName);
 
         return (!requestedBooks.isEmpty()) ? new ResponseEntity<>(requestedBooks, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

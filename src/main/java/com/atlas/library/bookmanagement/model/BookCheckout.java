@@ -25,10 +25,10 @@ public class BookCheckout {
     private String bookCheckoutId;
 
     @Column(nullable = false)
-    private int bookId;
+    private String bookId;
 
     @Column(nullable = false)
-    private int userId;
+    private String userId;
 
     private boolean renewable;
 
