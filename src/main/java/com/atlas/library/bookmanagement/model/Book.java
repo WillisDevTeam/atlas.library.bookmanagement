@@ -20,7 +20,8 @@ import java.time.LocalDateTime;
 public class Book {
 
     @Id
-    private int bookId;
+    @Column(nullable = false, unique = true)
+    private String bookId;
 
     @Column(unique = true)
     private String ISBN;
@@ -28,16 +29,16 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String author;
 
+    @Column(nullable = false)
     private String genre;
 
     @Column(nullable = false)
     private boolean available;
 
     private Double cost;
-
-    private int numberOfCopies;
 
     private String publisherName;
 

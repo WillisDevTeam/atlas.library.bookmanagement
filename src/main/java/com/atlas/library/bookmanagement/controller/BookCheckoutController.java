@@ -35,6 +35,13 @@ public class BookCheckoutController {
         return (bookCheckout.isPresent()) ? new ResponseEntity<>(bookCheckout, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/all/{bookCheckoutId}")
+    public ResponseEntity<?> getAllBookCheckout(@PathVariable("bookCheckoutId") final int bookCheckoutId) {
+        Optional<BookCheckout> bookCheckout = bookService.getBookCheckout(bookCheckoutId);
+
+        return (bookCheckout.isPresent()) ? new ResponseEntity<>(bookCheckout, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @PostMapping
     public ResponseEntity<?> createBookCheckout(@RequestBody Requests.CreateBookCheckoutModel createBookCheckoutModel) {
         val newBookCheckout = bookService.createBookCheckout(createBookCheckoutModel);

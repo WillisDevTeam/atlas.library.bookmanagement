@@ -7,14 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-
+import java.util.UUID;
 
 public class Requests {
 
     @Data
     @Builder
     public static class CreateBookModel {
-        private int bookId;
         private String isbn;
         private String title;
         private String author;
@@ -43,7 +42,6 @@ public class Requests {
     @Data
     @Builder
     public static class CreateBookCheckoutModel {
-        private int bookCheckoutId;
         private int bookId;
         private int clientId;
         private LocalDateTime dueDate;
@@ -51,7 +49,7 @@ public class Requests {
 
     public static Book ofBookCreate(CreateBookModel createBookModel) {
         return Book.builder()
-                .bookId(createBookModel.getBookId())
+                .bookId(UUID.randomUUID().toString())
                 .ISBN(createBookModel.getIsbn())
                 .title(createBookModel.getTitle())
                 .author(createBookModel.getAuthor())
@@ -59,12 +57,15 @@ public class Requests {
                 .cost(createBookModel.getCost())
                 .publisherName(createBookModel.getPublisherName())
                 .publishDate(createBookModel.getPublishDate())
+                .available(true)
+                .modificationDate(LocalDateTime.now())
+                .creationDate(LocalDateTime.now())
                 .build();
     }
 
     public static BookCheckout ofBookCheckoutCreate(CreateBookCheckoutModel createBookCheckoutModel) {
         return BookCheckout.builder()
-                .bookCheckoutId(createBookCheckoutModel.getBookCheckoutId())
+                .bookCheckoutId(UUID.randomUUID().toString())
                 .bookId(createBookCheckoutModel.bookId)
                 .userId(createBookCheckoutModel.clientId)
                 .dueDate(createBookCheckoutModel.getDueDate())

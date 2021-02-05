@@ -1,5 +1,6 @@
 package com.atlas.library.bookmanagement.service;
 
+import com.atlas.library.bookmanagement.configuration.query.QuerySpecificationsBuilder;
 import com.atlas.library.bookmanagement.model.Book;
 import com.atlas.library.bookmanagement.model.BookCheckout;
 import com.atlas.library.bookmanagement.model.User;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,49 +27,31 @@ public class BookMgmtService {
     private final UserRepository userRepository;
     private final BookCheckoutRepository bookCheckoutRepository;
 
-    public Optional<Book> getLibraryBook(int bookId) {
+    public Optional<Book> getLibraryBook(String bookId) {
         log.info("you are getting a book with bookId={}", bookId);
         return bookRepository.findById(bookId);
     }
 
-    public Optional<Book> getLibraryBook(int bookId, String publisherName, String bookAuthor) {
-        log.info("you are getting a book with bookId={}, publisherName={}, and author={}", bookId, publisherName, bookAuthor);
-        if(publisherName.isEmpty() && bookAuthor.isEmpty()) {
-            return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, null, null);
-        } else if (bookAuthor.isEmpty()){
-            return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, publisherName, null);
-        } else if (publisherName.isEmpty()){
-            return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, null, bookAuthor);
-        }
-        return bookRepository.findByBookIdAndPublisherNameAndAuthor(bookId, publisherName, bookAuthor);
+    public List<Book> getLibraryBook(List<String> title, List<String> bookAuthor, List<String> genre, List<String> publisherName) {
+        log.info("you are getting a book with titles={}, publisherNames={}, and authors={}", title.toString(), publisherName.toString(), bookAuthor.toString());
+
+        val specification = new QuerySpecificationsBuilder<Book>()
+                .with("title", title)
+                .with("author", bookAuthor)
+                .with("genre", genre)
+                .with("publisherName", publisherName)
+                .build();
+
+        log.info("Searching for books by filters");
+        return bookRepository.findAll(specification);
     }
 
     public Book createNewLibraryBook(Requests.CreateBookModel createBookModel) {
-        // first check to see if book already exists in DB
-        val bookAudit = bookRepository.findByBookIdAndISBN(createBookModel.getBookId(), createBookModel.getIsbn());
-        if(bookAudit.isPresent()) {
-            val existingBook = bookAudit.get();
-            int currentNumberOfCopies = existingBook.getNumberOfCopies();
-            log.info("Book with isbn={} already exists in DB, increasing numberOfCopies by one.", existingBook.getISBN());
-
-            existingBook.setModificationDate(LocalDateTime.now());
-            existingBook.setNumberOfCopies(currentNumberOfCopies+1);
-            existingBook.setAvailable(true);
-
-            return bookRepository.save(existingBook);
-        }
-
-        Book newBook = Requests.ofBookCreate(createBookModel);
-        log.info("Creating a new book with bookId={} title={}, author={}, publisher={}", newBook.getBookId(), newBook.getTitle(), newBook.getAuthor(), newBook.getPublisherName());
-
-        newBook.setAvailable(true);
-        newBook.setNumberOfCopies(1);
-        newBook.setModificationDate(LocalDateTime.now());
-        newBook.setCreationDate(LocalDateTime.now());
-        return bookRepository.save(newBook);
+        log.info("Creating a new book with isbn={}, title={}, author={}, publisher={}", createBookModel.getIsbn(), createBookModel.getTitle(), createBookModel.getAuthor(), createBookModel.getPublisherName());
+        return bookRepository.save(Requests.ofBookCreate(createBookModel));
     }
 
-    public Optional<Book> updateLibraryBook(int bookId, Double bookCost) {
+    public Optional<Book> updateLibraryBook(String bookId, Double bookCost) {
         log.info("Attempting to update a book with bookId={}, cost={}", bookId, bookCost);
         val bookAudit = bookRepository.findById(bookId);
         if(bookAudit.isPresent()) {
@@ -80,14 +64,14 @@ public class BookMgmtService {
         return Optional.empty();
     }
 
-    public void deleteLibraryBook(int bookId) {
+    public void deleteLibraryBook(String bookId) {
         log.info("you are deleting a book with bookId={}", bookId);
         bookRepository.deleteById(bookId);
     }
 
-    public Optional<User> getUser(int clientId) {
-        log.info("you are getting a book with bookId={}", clientId);
-        return userRepository.findById(clientId);
+    public Optional<User> getUser(String userId) {
+        log.info("you are getting a book with bookId={}", userId);
+        return userRepository.findById(userId);
     }
 
     public User createNewUser(User user) {
@@ -95,17 +79,17 @@ public class BookMgmtService {
         return userRepository.save(user);
     }
 
-    public Optional<User> updateUser(int clientId, User user) {
+    public Optional<User> updateUser(String userId, User user) {
         log.info("you are attempting to update a book creating a new book with firstName={} lastName={}", user.getFirstName(), user.getLastName());
-        if (getLibraryBook(clientId).isPresent()) {
+        if (getLibraryBook(userId).isPresent()) {
             return Optional.of(userRepository.save(user));
         }
         return Optional.empty();
     }
 
-    public void deleteUser(int clientId) {
-        log.info("you are deleting a client with clientId={}", clientId);
-        userRepository.deleteById(clientId);
+    public void deleteUser(String userId) {
+        log.info("you are deleting a client with clientId={}", userId);
+        userRepository.deleteById(userId);
     }
 
     public Optional<BookCheckout> getBookCheckout(int bookCheckoutId) {
@@ -113,14 +97,25 @@ public class BookMgmtService {
         return bookCheckoutRepository.findById(bookCheckoutId);
     }
 
-    public Optional<BookCheckout> createBookCheckout(Requests.CreateBookCheckoutModel createBookCheckoutModel) {
-        // first check to see if it exists in the DB
-        Optional<BookCheckout> bookCheckoutAudit = bookCheckoutRepository.findById(createBookCheckoutModel.getBookCheckoutId());
-        if(bookCheckoutAudit.isPresent()) {
-            BookCheckout existingBookCheckout = bookCheckoutAudit.get();
-            log.info("Book Checkout already exists in the db with bookCheckoutId={}. Returning existing book", existingBookCheckout.getBookCheckoutId());
-            return Optional.empty();
+    public Optional<BookCheckout> getAllBookCheckout(int bookCheckoutId, int bookIds, int userIds) {
+        log.info("you are getting a bookCheckout with bookCheckoutId={}", bookCheckoutId);
+
+        // this requires a list of bookCheckout Objects
+        // see if I can use that to optimize they way I get multiple books
+        //
+        // val bookTemp = bookCheckoutRepository.findAll(bookCheckoutId);
+
+        val bookTemp = bookCheckoutRepository.findAllByBookIdAndUserId(bookCheckoutId, bookIds, userIds);
+        if (bookTemp.isPresent()){
+            val bookList = bookTemp.get();
+            log.info("here is what was returned from bookTempSize={}", bookList.size());
+            log.info("here is the contents of the book list={}", bookList.toString());
         }
+
+        return bookCheckoutRepository.findById(bookCheckoutId);
+    }
+
+    public Optional<BookCheckout> createBookCheckout(Requests.CreateBookCheckoutModel createBookCheckoutModel) {
 
         BookCheckout newBookCheckout = Requests.ofBookCheckoutCreate(createBookCheckoutModel);
         log.info("Creating a new Book Checkout with bookCheckoutId={}, bookId={}, clientId={}", newBookCheckout.getBookCheckoutId(), newBookCheckout.getBookId(), newBookCheckout.getUserId());

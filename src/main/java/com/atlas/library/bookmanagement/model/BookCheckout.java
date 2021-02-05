@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -23,8 +21,8 @@ import java.time.LocalDateTime;
 public class BookCheckout {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int bookCheckoutId;
+    @Column(nullable = false)
+    private String bookCheckoutId;
 
     @Column(nullable = false)
     private int bookId;

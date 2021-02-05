@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -32,23 +31,19 @@ public class LibraryMgmtController {
     private final BookMgmtService bookService;
 
     @GetMapping("/book/{bookId}")
-    public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final int bookId) {
+    public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final String bookId) {
         val requestedBook = bookService.getLibraryBook(bookId);
 
         return (requestedBook.isPresent()) ? new ResponseEntity<>(requestedBook, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/books")
-    public ResponseEntity<?> getLibraryBooks(@RequestParam(value = "books") List<Integer> bookIds,
-                                             @RequestParam(value = "author", required = false, defaultValue = "") String author,
-                                             @RequestParam(value = "publisherName", required = false, defaultValue = "") String publisherName) {
+    public ResponseEntity<?> getLibraryBooks(@RequestParam(value = "title", required = false, defaultValue = "") List<String> title,
+                                             @RequestParam(value = "bookAuthor", required = false, defaultValue = "") List<String> bookAuthor,
+                                             @RequestParam(value = "genre", required = false, defaultValue = "") List<String> genre,
+                                             @RequestParam(value = "publisherName", required = false, defaultValue = "") List<String> publisherName) {
 
-        List<Book> requestedBooks = new ArrayList<>();
-        bookIds.forEach(bookId -> {
-            val requestedBook = bookService.getLibraryBook(bookId, publisherName, author);
-            requestedBook.ifPresent(requestedBooks::add);
-            log.info("requestedBooks array size={}", requestedBooks.size());
-        });
+        List<Book> requestedBooks = bookService.getLibraryBook(title, bookAuthor, genre, publisherName);
 
         return (!requestedBooks.isEmpty()) ? new ResponseEntity<>(requestedBooks, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -63,38 +58,38 @@ public class LibraryMgmtController {
     }
 
     @PutMapping("/book/{bookId}/{bookCost}")
-    public ResponseEntity<?> updateLibraryBook(@PathVariable("bookId") final int bookId, @PathVariable("bookCost") final double bookCost) {
+    public ResponseEntity<?> updateLibraryBook(@PathVariable("bookId") final String bookId, @PathVariable("bookCost") final double bookCost) {
         val requestedBook = bookService.updateLibraryBook(bookId, bookCost);
         return (requestedBook.isPresent()) ? new ResponseEntity<>(requestedBook, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/book/{bookId}")
-    public ResponseEntity<?> deleteLibraryBook(@PathVariable("bookId") final int bookId) {
+    public ResponseEntity<?> deleteLibraryBook(@PathVariable("bookId") final String bookId) {
         bookService.deleteLibraryBook(bookId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<?> getLibraryClient(@PathVariable("clientId") final int clientId) {
-        bookService.getClient(clientId);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getLibraryUser(@PathVariable("userId") final String userId) {
+        bookService.getUser(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/client/")
-    public ResponseEntity<?> createLibraryClient(@RequestBody User user) {
-        bookService.createNewClient(user);
+    @PostMapping("/user/")
+    public ResponseEntity<?> createLibraryUser(@RequestBody User user) {
+        bookService.createNewUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/client/{clientId}")
-    public ResponseEntity<?> updateLibraryClient(@PathVariable("clientId") final int clientId, @RequestBody User user) {
-        val updatedClient = bookService.updateClient(clientId, user);
-        return (updatedClient.isPresent()) ? new ResponseEntity<>(updatedClient, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("/user/{userId}")
+    public ResponseEntity<?> updateLibraryUser(@PathVariable("userId") final String userId, @RequestBody User user) {
+        val updatedUser = bookService.updateUser(userId, user);
+        return (updatedUser.isPresent()) ? new ResponseEntity<>(updatedUser, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/client/{clientId}")
-    public ResponseEntity<?> deleteLibraryClient(@PathVariable("clientId") final int clientId) {
-        bookService.deleteClient(clientId);
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteLibraryUser(@PathVariable("userId") final String userId) {
+        bookService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
