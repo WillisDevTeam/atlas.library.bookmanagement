@@ -6,7 +6,6 @@ import com.atlas.library.bookmanagement.model.BookQuantity;
 import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.repository.BookQuantityRepository;
 import com.atlas.library.bookmanagement.repository.LibraryBookRepository;
-import com.atlas.library.bookmanagement.repository.LibraryUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,7 +24,6 @@ import java.util.UUID;
 public class LibraryBookService {
 
     private final LibraryBookRepository libraryBookRepository;
-    private final LibraryUserRepository libraryUserRepository;
     private final BookQuantityRepository bookQuantityRepository;
 
     public Optional<Book> getLibraryBook(String bookId) {
@@ -33,7 +31,7 @@ public class LibraryBookService {
         return libraryBookRepository.findById(bookId);
     }
 
-    public List<Book> getLibraryBook(List<String> bookIds, List<String> titles, List<String> bookAuthors, List<String> genres, List<String> publisherNames) {
+    public List<Book> getAllLibraryBooks(List<String> bookIds, List<String> titles, List<String> bookAuthors, List<String> genres, List<String> publisherNames) {
         log.info("you are getting a book with titles={}, publisherNames={}, and authors={}", titles.toString(), publisherNames.toString(), bookAuthors.toString());
 
         val specification = new QuerySpecificationsBuilder<Book>()
