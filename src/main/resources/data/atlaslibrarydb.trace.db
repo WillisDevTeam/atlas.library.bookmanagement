@@ -1370,3 +1370,12 @@ VALUES
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.lang.Thread.run(Thread.java:748)
+2021-02-04 17:00:07 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "6312fa1c-4972-45ee-93e0-f9adcb69e6b1"; SQL statement:
+select book0_.book_id as book_id1_0_0_, book0_.isbn as isbn2_0_0_, book0_.author as author3_0_0_, book0_.available as availabl4_0_0_, book0_.cost as cost5_0_0_, book0_.creation_date as creation6_0_0_, book0_.genre as genre7_0_0_, book0_.modification_date as modifica8_0_0_, book0_.publish_date as publish_9_0_0_, book0_.publisher_name as publish10_0_0_, book0_.title as title11_0_0_ from book book0_ where book0_.book_id=? [22018-200]
+2021-02-04 17:02:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "BOOK_ID VARCHAR(20)": "'1a885ec6-d583-49c8-90db-c63e366da9c6' (36)"; SQL statement:
+insert into book (isbn, author, available, cost, creation_date, genre, modification_date, publish_date, publisher_name, title, book_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) [22001-200]
+2021-02-04 17:04:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "BOOK_ID VARCHAR(20)": "'0a4785f4-c03c-4698-8df5-ce5920cab9cd' (36)"; SQL statement:
+insert into book (isbn, author, available, cost, creation_date, genre, modification_date, publish_date, publisher_name, title, book_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) [22001-200]
