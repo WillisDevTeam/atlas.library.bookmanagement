@@ -42,8 +42,8 @@ public class Requests {
     @Data
     @Builder
     public static class CreateBookCheckoutModel {
-        private int bookId;
-        private int clientId;
+        private String bookId;
+        private String userId;
         private LocalDateTime dueDate;
     }
 
@@ -57,7 +57,6 @@ public class Requests {
                 .cost(createBookModel.getCost())
                 .publisherName(createBookModel.getPublisherName())
                 .publishDate(createBookModel.getPublishDate())
-                .available(true)
                 .modificationDate(LocalDateTime.now())
                 .creationDate(LocalDateTime.now())
                 .build();
@@ -67,7 +66,7 @@ public class Requests {
         return BookCheckout.builder()
                 .bookCheckoutId(UUID.randomUUID().toString())
                 .bookId(createBookCheckoutModel.bookId)
-                .userId(createBookCheckoutModel.clientId)
+                .userId(createBookCheckoutModel.userId)
                 .dueDate(createBookCheckoutModel.getDueDate())
                 .build();
     }

@@ -48,8 +48,9 @@ public class BookCheckoutController {
 
     @PostMapping
     public ResponseEntity<?> createBookCheckout(@RequestBody Requests.CreateBookCheckoutModel createBookCheckoutModel) {
+        log.info("Recieved a request to create a new book checkout with bookId={}", createBookCheckoutModel.getBookId());
         val newBookCheckout = bookService.createBookCheckout(createBookCheckoutModel);
-        return (newBookCheckout.isPresent()) ? new ResponseEntity<>(newBookCheckout, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.CONFLICT);
+        return (newBookCheckout.isPresent()) ? new ResponseEntity<>(newBookCheckout, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/{bookCheckoutId}")
@@ -63,7 +64,7 @@ public class BookCheckoutController {
     @DeleteMapping("/{bookCheckoutId}")
     public ResponseEntity<?> deleteBookCheckout(@PathVariable("bookCheckoutId") final String bookCheckoutId) {
         log.info("Received a request to delete a bookCheckout with bookCheckoutId={}", bookCheckoutId);
-        bookService.deleteBookCheckout(bookCheckoutId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        val result = bookService.deleteBookCheckout(bookCheckoutId);
+        return (result) ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Resource was not found", HttpStatus.BAD_REQUEST);
     }
 }

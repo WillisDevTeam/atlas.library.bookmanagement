@@ -16,31 +16,20 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "BOOK")
-public class Book {
-
+@Table(name = "book_quantity")
+public class BookQuantity {
     @Id
-    @Column(nullable = false, unique = true)
-    private String bookId;
-
-    @Column(unique = true, nullable = false)
-    private String ISBN;
+    @Column(nullable = false)
+    private String bookQuantityId;
 
     @Column(nullable = false)
-    private String title;
+    private String isbn;
 
     @Column(nullable = false)
-    private String author;
+    private int totalQuantity;
 
     @Column(nullable = false)
-    private String genre;
-
-    private Double cost;
-
-    private String publisherName;
-
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDateTime publishDate;
+    private int currentQuantity;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime creationDate;
