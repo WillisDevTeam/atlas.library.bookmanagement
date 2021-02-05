@@ -7,7 +7,7 @@ import com.atlas.library.bookmanagement.model.BookQuantity;
 import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.repository.BookCheckoutRepository;
 import com.atlas.library.bookmanagement.repository.BookQuantityRepository;
-import com.atlas.library.bookmanagement.repository.BookRepository;
+import com.atlas.library.bookmanagement.repository.LibraryBookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,16 +25,16 @@ import java.util.Optional;
 public class BookCheckoutService {
 
     private final BookCheckoutRepository bookCheckoutRepository;
-    private final BookRepository bookRepository;
+    private final LibraryBookRepository libraryBookRepository;
     private final BookQuantityRepository bookQuantityRepository;
 
     public Optional<BookCheckout> getBookCheckout(String bookCheckoutId) {
-        log.info("you are getting a bookCheckout with bookCheckoutId={}", bookCheckoutId);
+        log.info("Attempting to get a bookCheckout with bookCheckoutId={}", bookCheckoutId);
         return bookCheckoutRepository.findById(bookCheckoutId);
     }
 
     public List<BookCheckout> getAllBookCheckout(List<String> bookCheckoutIds, List<String> bookIds, List<String> userIds) {
-        log.info("you are getting a book with titles={}, publisherNames={}, and authors={}", bookCheckoutIds.toString(), bookIds.toString(), userIds.toString());
+        log.info("Attempting to get all books with bookCheckoutIds={}, bookIds={}, and userIds={}", bookCheckoutIds.toString(), bookIds.toString(), userIds.toString());
 
         val specification = new QuerySpecificationsBuilder<BookCheckout>()
                 .with("bookCheckoutId", bookCheckoutIds)
@@ -51,7 +51,7 @@ public class BookCheckoutService {
 
         BookCheckout newBookCheckout = Requests.ofBookCheckoutCreate(createBookCheckoutModel);
         Optional<BookQuantity> bookQuantityObj;
-        Optional<Book> bookRequested = bookRepository.findById(newBookCheckout.getBookId());
+        Optional<Book> bookRequested = libraryBookRepository.findById(newBookCheckout.getBookId());
 
         if (bookRequested.isPresent()) {
             // check to see if that book is available for checkout
@@ -117,7 +117,7 @@ public class BookCheckoutService {
         if (requestedCheckoutRecord.isPresent()) {
             val reqBook = requestedCheckoutRecord.get();
 
-            Optional<Book> bookRequested = bookRepository.findById(reqBook.getBookId());
+            Optional<Book> bookRequested = libraryBookRepository.findById(reqBook.getBookId());
 
             if (bookRequested.isPresent()){
                 // check to see if that book is available for checkout

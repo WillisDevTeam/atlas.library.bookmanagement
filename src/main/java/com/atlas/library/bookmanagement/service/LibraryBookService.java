@@ -3,11 +3,10 @@ package com.atlas.library.bookmanagement.service;
 import com.atlas.library.bookmanagement.configuration.query.QuerySpecificationsBuilder;
 import com.atlas.library.bookmanagement.model.Book;
 import com.atlas.library.bookmanagement.model.BookQuantity;
-import com.atlas.library.bookmanagement.model.User;
 import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.repository.BookQuantityRepository;
-import com.atlas.library.bookmanagement.repository.BookRepository;
-import com.atlas.library.bookmanagement.repository.UserRepository;
+import com.atlas.library.bookmanagement.repository.LibraryBookRepository;
+import com.atlas.library.bookmanagement.repository.LibraryUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,19 +17,20 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class LibraryMgmtService {
+public class LibraryBookService {
 
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
+    private final LibraryBookRepository libraryBookRepository;
+    private final LibraryUserRepository libraryUserRepository;
     private final BookQuantityRepository bookQuantityRepository;
 
     public Optional<Book> getLibraryBook(String bookId) {
         log.info("you are getting a book with bookId={}", bookId);
-        return bookRepository.findById(bookId);
+        return libraryBookRepository.findById(bookId);
     }
 
     public List<Book> getLibraryBook(List<String> bookIds, List<String> titles, List<String> bookAuthors, List<String> genres, List<String> publisherNames) {
@@ -45,7 +45,7 @@ public class LibraryMgmtService {
                 .build();
 
         log.info("Searching for books by filters");
-        return bookRepository.findAll(specification);
+        return libraryBookRepository.findAll(specification);
     }
 
     @Transactional
@@ -64,6 +64,7 @@ public class LibraryMgmtService {
             } else {
                 log.info("Book Quantity object was empty. creating a new Book Quantity Object");
                 BookQuantity newBookQty = BookQuantity.builder()
+                        .bookQuantityId(UUID.randomUUID().toString())
                         .isbn(createBookModel.getIsbn())
                         .totalQuantity(1)
                         .currentQuantity(1)
@@ -74,7 +75,7 @@ public class LibraryMgmtService {
             }
 
             log.info("Creating a new book with isbn={}, title={}, author={}, publisher={}", createBookModel.getIsbn(), createBookModel.getTitle(), createBookModel.getAuthor(), createBookModel.getPublisherName());
-            return bookRepository.save(Requests.ofBookCreate(createBookModel));
+            return libraryBookRepository.save(Requests.ofBookCreate(createBookModel));
         } catch (Exception e) {
             log.error("Error occured while creating a new book", e);
             throw new RuntimeException(e);
@@ -83,45 +84,38 @@ public class LibraryMgmtService {
 
     public Optional<Book> updateLibraryBook(String bookId, Double bookCost) {
         log.info("Attempting to update a book with bookId={}, cost={}", bookId, bookCost);
-        val bookAudit = bookRepository.findById(bookId);
+        val bookAudit = libraryBookRepository.findById(bookId);
         if(bookAudit.isPresent()) {
             val existingBookToUpdate = bookAudit.get();
             log.info("Library book was found, attempting to update the book");
             existingBookToUpdate.setCost(bookCost);
             existingBookToUpdate.setModificationDate(LocalDateTime.now());
-            return Optional.of(bookRepository.save(existingBookToUpdate));
+            return Optional.of(libraryBookRepository.save(existingBookToUpdate));
         }
         return Optional.empty();
     }
 
     @Transactional
     public void deleteLibraryBook(String bookId) {
-        log.info("you are deleting a book with bookId={}", bookId);
-        bookRepository.deleteById(bookId);
-    }
 
-    public Optional<User> getUser(String userId) {
-        log.info("you are getting a book with bookId={}", userId);
-        return userRepository.findById(userId);
-    }
+        // get requested book details from table
+        Optional<Book> requestedBookObj = libraryBookRepository.findById(bookId);
 
-    public User createNewUser(User user) {
-        log.info("you are creating a new User with firstName={} lastName={}", user.getFirstName(), user.getLastName());
-        return userRepository.save(user);
-    }
+        if (requestedBookObj.isPresent()) {
 
-    public Optional<User> updateUser(String userId, User user) {
-        log.info("you are attempting to update a book creating a new book with firstName={} lastName={}", user.getFirstName(), user.getLastName());
-        if (getLibraryBook(userId).isPresent()) {
-            return Optional.of(userRepository.save(user));
+            // delete book_quantity record from table after checking to make sure all copies have returned
+            Optional<BookQuantity> bookQtyResponseObj = bookQuantityRepository.findByIsbn(requestedBookObj.get().getISBN());
+
+            if (bookQtyResponseObj.isPresent() && bookQtyResponseObj.get().getCurrentQuantity() == bookQtyResponseObj.get().getTotalQuantity()) {
+                try {
+                    log.info("Attempting to delete a book with bookId={} and book quantity with bookQuantityId={}", bookId, bookQtyResponseObj.get().getBookQuantityId());
+                    bookQuantityRepository.delete(bookQtyResponseObj.get());
+                    libraryBookRepository.deleteById(bookId);
+                } catch (Exception e) {
+                    log.error("Error occured while deleting book and book quantity", e);
+                    throw new RuntimeException(e);
+                }
+            }
         }
-        return Optional.empty();
     }
-
-    public void deleteUser(String userId) {
-        log.info("you are deleting a user with clientId={}", userId);
-        userRepository.deleteById(userId);
-    }
-
-
 }
