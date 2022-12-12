@@ -71,7 +71,7 @@ public class BookCheckoutController {
 
     @PostMapping
     public ResponseEntity<?> createBookCheckout(@RequestBody Requests.CreateBookCheckoutModel createBookCheckoutModel) {
-        log.info("Recieved a request to create a new book checkout with bookId={}", createBookCheckoutModel.getBookId());
+        log.info("Received a request to create a new book checkout with bookId={}", createBookCheckoutModel.getBookId());
         val newBookCheckout = bookService.createBookCheckout(createBookCheckoutModel);
 
         if(newBookCheckout.isPresent()) {
