@@ -1,0 +1,17 @@
+{
+    "bookCheckoutId": "c517e344-1e12-4a1d-a2db-2d1525c116df",
+    "bookId": "bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50",
+    "userId": "eabd08da-d81f-4c7e-8bcf-9020bf22484d",
+    "renewable": true,
+    "dueDate": "2022-12-20T12:00:00",
+    "creationDate": "2022-12-12T13:21:31.602965",
+    "modificationDate": "2022-12-12T13:21:31.602965",
+    "_links": {
+        "Extend due date by seven days": {
+            "href": "http://localhost:8080/atlas/library/checkout/v1/c517e344-1e12-4a1d-a2db-2d1525c116df"
+        },
+        "Delete Book Checkout record": {
+            "href": "http://localhost:8080/atlas/library/checkout/v1/c517e344-1e12-4a1d-a2db-2d1525c116df"
+        }
+    }
+}

@@ -46,6 +46,17 @@ public class LibraryBookService {
         return libraryBookRepository.findAll(specification);
     }
 
+    public Optional<BookQuantity> getBookAvailability(String bookId) {
+
+        Optional<Book> book = libraryBookRepository.findById(bookId);
+
+        if(book.isPresent()) {
+            // check book_quantity table for book availability
+            return bookQuantityRepository.findByIsbn(book.get().getISBN());
+        }
+        return Optional.empty();
+    }
+
     @Transactional
     public Book createNewLibraryBook(Requests.CreateBookModel createBookModel) {
 

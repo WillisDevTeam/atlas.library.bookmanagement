@@ -1,0 +1,134 @@
+[
+    {
+        "bookId": "01c9c860-c895-41b4-b777-d7846e2abb01",
+        "title": "title1",
+        "author": "phillip",
+        "genre": "fiction",
+        "cost": 12.95,
+        "publisherName": "pubName1",
+        "publishDate": "1980-12-01T00:00:00",
+        "creationDate": "2020-01-02T12:00:00",
+        "modificationDate": "2020-01-02T12:00:00",
+        "isbn": "0-3494-2905-7",
+        "links": [
+            {
+                "rel": "Update book cost to Holiday Special price of $6.99",
+                "href": "http://localhost:8080/atlas/library/book/v1/01c9c860-c895-41b4-b777-d7846e2abb01/6.99"
+            },
+            {
+                "rel": "Delete Book",
+                "href": "http://localhost:8080/atlas/library/book/v1/01c9c860-c895-41b4-b777-d7846e2abb01"
+            }
+        ]
+    },
+    {
+        "bookId": "01c9c860-c895-41b4-b777-d7846e2abb02",
+        "title": "title2",
+        "author": "tony",
+        "genre": "sci-fiction",
+        "cost": 15.95,
+        "publisherName": "pubName2",
+        "publishDate": "1990-03-01T00:00:00",
+        "creationDate": "2020-01-03T12:00:00",
+        "modificationDate": "2020-01-03T12:00:00",
+        "isbn": "0-2669-0606-0",
+        "links": [
+            {
+                "rel": "Update book cost to Holiday Special price of $6.99",
+                "href": "http://localhost:8080/atlas/library/book/v1/01c9c860-c895-41b4-b777-d7846e2abb02/6.99"
+            },
+            {
+                "rel": "Delete Book",
+                "href": "http://localhost:8080/atlas/library/book/v1/01c9c860-c895-41b4-b777-d7846e2abb02"
+            }
+        ]
+    },
+    {
+        "bookId": "01c9c860-c895-41b4-b777-d7846e2abb03",
+        "title": "title3",
+        "author": "phillip",
+        "genre": "non-fiction",
+        "cost": 8.95,
+        "publisherName": "pubName2",
+        "publishDate": "1995-08-01T00:00:00",
+        "creationDate": "2020-01-04T12:00:00",
+        "modificationDate": "2020-01-04T12:00:00",
+        "isbn": "0-2046-9976-2",
+        "links": [
+            {
+                "rel": "Update book cost to Holiday Special price of $6.99",
+                "href": "http://localhost:8080/atlas/library/book/v1/01c9c860-c895-41b4-b777-d7846e2abb03/6.99"
+            },
+            {
+                "rel": "Delete Book",
+                "href": "http://localhost:8080/atlas/library/book/v1/01c9c860-c895-41b4-b777-d7846e2abb03"
+            }
+        ]
+    },
+    {
+        "bookId": "38c74b50-6135-400a-82fe-d378993474b1",
+        "title": "whatGirlsWant",
+        "author": "chona",
+        "genre": "fiction",
+        "cost": 31.0,
+        "publisherName": "Publisher-R-US",
+        "publishDate": "2019-02-03T00:00:00",
+        "creationDate": "2021-02-04T23:11:26.852",
+        "modificationDate": "2021-02-04T23:13:37.863",
+        "isbn": "0-8413-6218-1",
+        "links": [
+            {
+                "rel": "Update book cost to Holiday Special price of $6.99",
+                "href": "http://localhost:8080/atlas/library/book/v1/38c74b50-6135-400a-82fe-d378993474b1/6.99"
+            },
+            {
+                "rel": "Delete Book",
+                "href": "http://localhost:8080/atlas/library/book/v1/38c74b50-6135-400a-82fe-d378993474b1"
+            }
+        ]
+    },
+    {
+        "bookId": "f21ea17b-9fb6-4ec1-9db4-e24fa9d328f0",
+        "title": "whatAnimalsWant",
+        "author": "phillip",
+        "genre": "fiction",
+        "cost": 10.99,
+        "publisherName": "Publisher-R-Not-US",
+        "publishDate": "2019-02-03T00:00:00",
+        "creationDate": "2021-02-05T00:03:33.004",
+        "modificationDate": "2021-02-05T00:03:33.004",
+        "isbn": "0-8413-6218-3",
+        "links": [
+            {
+                "rel": "Update book cost to Holiday Special price of $6.99",
+                "href": "http://localhost:8080/atlas/library/book/v1/f21ea17b-9fb6-4ec1-9db4-e24fa9d328f0/6.99"
+            },
+            {
+                "rel": "Delete Book",
+                "href": "http://localhost:8080/atlas/library/book/v1/f21ea17b-9fb6-4ec1-9db4-e24fa9d328f0"
+            }
+        ]
+    },
+    {
+        "bookId": "bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50",
+        "title": "Return to programming",
+        "author": "phillip",
+        "genre": "non-fiction",
+        "cost": 39.99,
+        "publisherName": "publisherName",
+        "publishDate": "2022-12-12T00:00:00",
+        "creationDate": "2022-12-12T13:14:07.784357",
+        "modificationDate": "2022-12-12T13:14:07.784357",
+        "isbn": "isbnNumber",
+        "links": [
+            {
+                "rel": "Update book cost to Holiday Special price of $6.99",
+                "href": "http://localhost:8080/atlas/library/book/v1/bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50/6.99"
+            },
+            {
+                "rel": "Delete Book",
+                "href": "http://localhost:8080/atlas/library/book/v1/bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50"
+            }
+        ]
+    }
+]
