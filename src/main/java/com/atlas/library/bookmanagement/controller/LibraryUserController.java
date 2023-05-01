@@ -47,7 +47,7 @@ public class LibraryUserController {
 
     @PostMapping
     public ResponseEntity<?> createLibraryUser(@RequestBody Requests.CreateUserModel createUserModel) {
-        log.info("Recieved a request to create a new user record with user firstName={}, lastName={}", createUserModel.getFirstName(), createUserModel.getLastName());
+        log.info("Received a request to create a new user record with user firstName={}, lastName={}", createUserModel.getFirstName(), createUserModel.getLastName());
         User newlyCreatedUser = libraryUserService.createNewUser(createUserModel);
 
         EntityModel<User> resource = EntityModel.of(newlyCreatedUser);

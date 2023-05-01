@@ -1,0 +1,287 @@
+openapi: 3.0.3
+info:
+  title: Swagger Library API -
+  description: |-
+    This is a example Library backend API Server.
+  version: "1.0"
+tags:
+  - name: Book Checkout
+    description: Operations to perform when dealing with checking out a book
+  - name: Library Book
+    description: Access to managing books in the library
+  - name: Library User
+    description: Operations about user
+paths:
+  /atlas/library/checkout/v1/{bookCheckoutId}:
+    get:
+      tags:
+        - Book Checkout
+      summary: lookup book that has been checked out
+      description: Returns a book that has been checked out and assigned to a specific user
+      operationId: getBookCheckout
+      parameters:
+        - name: bookCheckoutId
+          in: path
+          description: ID of bookCheckout to return
+          required: true
+          schema:
+            format: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCheckout'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: checked book not found
+  /atlas/library/checkout/v1:
+    post:
+      tags:
+        - Book Checkout
+      summary: Checkout Book by bookId
+      description: This can only be done by the logged in user looking to checkout a book
+      operationId: createBookCheckout
+      requestBody:
+        description: Created Book Model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookCheckoutModel'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCheckout'
+  /atlas/library/book/v1/{bookId}:
+    get:
+      tags:
+        - Library Book
+      summary: Find a book by bookId
+      description: Returns a single book
+      operationId: getLibraryBook
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of book to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Book not found
+  /atlas/library/book/v1:
+    post:
+      tags:
+        - Library Book
+      summary: Create book
+      description: create a new book for the library
+      operationId: createLibraryBook
+      requestBody:
+        description: Book object to be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookModel'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+  /atlas/library/user/v1/{userId}:
+    get:
+      tags:
+        - Library User
+      summary: Get user by userId
+      description: ''
+      operationId: getLibraryUser
+      parameters:
+        - name: userId
+          in: path
+          description: 'The userId that needs to be fetched.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  /atlas/library/user/v1:
+    post:
+      tags:
+        - Library User
+      summary: Create user
+      description: ''
+      operationId: createLibraryUser
+      requestBody:
+        description: User object to be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserModel'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+components:
+  schemas:
+    BookCheckout:
+      required:
+        - bookCheckoutId
+      type: object
+      properties:
+        bookCheckoutId:
+          type: string
+          example: "c517e344-1e12-4a1d-a2db-2d1525c116df"
+        bookId:
+          type: string
+          example: "bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50"
+        userId:
+          type: string
+          example: "eabd08da-d81f-4c7e-8bcf-9020bf22484d"
+        renewable:
+          type: boolean
+          example: true
+        dueDate:
+          type: string
+          example: "2022-12-20T12:00:00"
+        creationDate:
+          type: string
+          example: "2022-12-12T13:21:31.602965"
+        modificationDate:
+          type: string
+          example: "2022-12-12T13:21:31.602965"
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: string
+          example: "bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50"
+        isbn:
+          type: string
+          example: "c517e344-1e12-4a1d-a2db-2d1525c116df"
+        title:
+          type: string
+          example: "intro to programming"
+        author:
+          type: string
+          example: "Phillip Willis"
+        genre:
+          type: string
+          example: "fiction"
+        cost:
+          type: number
+          example: 9.99
+        publisherName:
+          type: string
+          example: "Books-R-Us"
+        publishDate:
+          type: string
+          example: "2022-12-12T12:00:00"
+        creationDate:
+          type: string
+          example: "2022-12-12T13:21:31.602965"
+        modificationDate:
+          type: string
+          example: "2022-12-12T13:21:31.602965"
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "eabd08da-d81f-4c7e-8bcf-9020bf22484d"
+        firstName:
+          type: string
+          example: "phillip"
+        lastName:
+          type: string
+          example: "willis"
+        accountBalance:
+          type: string
+          example: john@email.com
+        creationDate:
+          type: string
+          example: "2022-12-12T13:21:31.602965"
+        modificationDate:
+          type: string
+          example: "2022-12-12T13:21:31.602965"
+    CreateBookCheckoutModel:
+      required:
+        - bookId
+        - userId
+      type: object
+      properties:
+        bookId:
+          type: string
+          example: "bd2fe4bb-33cf-4d9f-b35b-13a757e9fa50"
+        userId:
+          type: string
+          example: "eabd08da-d81f-4c7e-8bcf-9020bf22484d"
+        dueDate:
+          type: string
+          example: "2022-12-12T12:00:00"
+    CreateBookModel:
+      required:
+        - isbn
+      type: object
+      properties:
+        isbn:
+          type: string
+          example: "c517e344-1e12-4a1d-a2db-2d1525c116df"
+        title:
+          type: string
+          example: "intro to programming"
+        author:
+          type: string
+          example: "Phillip Willis"
+        genre:
+          type: string
+          example: "fiction"
+        cost:
+          type: number
+          example: 9.99
+        publisherName:
+          type: string
+          example: "Books-R-Us"
+        publishDate:
+          type: string
+          example: "2022-12-12T12:00:00"
+    CreateUserModel:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "phillip"
+        lastName:
+          type: string
+          example: "willis"
