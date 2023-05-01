@@ -20,7 +20,7 @@ public class LibraryUserService {
 
     public Optional<User> getUser(String userId) {
 
-        log.info("you are getting a book with bookId={}", userId);
+        log.info("you are getting a user with userId={}", userId);
         return libraryUserRepository.findById(userId);
     }
 

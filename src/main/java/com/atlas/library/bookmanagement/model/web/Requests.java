@@ -40,6 +40,13 @@ public class Requests {
 
     @Data
     @Builder
+    public static class RenewCheckoutModel {
+        private String bookId;
+        private String userId;
+    }
+
+    @Data
+    @Builder
     public static class CreateBookCheckoutModel {
         private String bookId;
         private String userId;
@@ -67,6 +74,13 @@ public class Requests {
                 .bookId(createBookCheckoutModel.bookId)
                 .userId(createBookCheckoutModel.userId)
                 .dueDate(createBookCheckoutModel.getDueDate())
+                .build();
+    }
+
+    public static BookCheckout ofRenewCheckout(RenewCheckoutModel renewCheckoutModel) {
+        return BookCheckout.builder()
+                .bookId(renewCheckoutModel.bookId)
+                .userId(renewCheckoutModel.userId)
                 .build();
     }
 

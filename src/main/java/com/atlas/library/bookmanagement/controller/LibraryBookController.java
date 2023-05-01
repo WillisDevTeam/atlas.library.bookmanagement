@@ -1,6 +1,7 @@
 package com.atlas.library.bookmanagement.controller;
 
 import com.atlas.library.bookmanagement.model.Book;
+import com.atlas.library.bookmanagement.model.BookQuantity;
 import com.atlas.library.bookmanagement.model.web.Requests;
 import com.atlas.library.bookmanagement.service.LibraryBookService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -34,7 +36,7 @@ public class LibraryBookController {
 
     @GetMapping("/{bookId}")
     public ResponseEntity<?> getLibraryBook(@PathVariable("bookId") final String bookId) {
-        val requestedBook = bookService.getLibraryBook(bookId);
+        Optional<Book> requestedBook = bookService.getLibraryBook(bookId);
 
         if (requestedBook.isPresent()) {
             EntityModel<Book> resource = EntityModel.of(requestedBook.get());
@@ -69,6 +71,21 @@ public class LibraryBookController {
         }
 
         return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/availability/{bookId}")
+    public ResponseEntity<?> checkBookAvailability(@PathVariable("bookId") final String bookId) {
+        Optional<BookQuantity> requestedBookAvailability = bookService.getBookAvailability(bookId);
+
+        if (requestedBookAvailability.isPresent()) {
+            EntityModel<BookQuantity> resource = EntityModel.of(requestedBookAvailability.get());
+            resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateLibraryBookCost(bookId, 6.99)).withRel("Update book cost to Holiday Special price of $6.99"));
+            resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).deleteLibraryBook(bookId)).withRel("Delete Book"));
+            return new ResponseEntity<>(resource, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
     @PostMapping

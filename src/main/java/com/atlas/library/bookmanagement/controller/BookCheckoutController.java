@@ -83,6 +83,21 @@ public class BookCheckoutController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PutMapping("/renew")
+    public ResponseEntity<?> renewCheckout(@RequestBody Requests.RenewCheckoutModel renewBook) {
+        log.info("Received a request to renew a book that has already been checked out with bookId={}", renewBook.getBookId());
+        val newBookCheckout = bookService.renewCheckout(renewBook);
+
+        if(newBookCheckout.isPresent()) {
+            EntityModel<BookCheckout> resource = EntityModel.of(newBookCheckout.get());
+            resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getBookCheckout(newBookCheckout.get().getBookCheckoutId())).withRel("Get new Book Checkout record"));
+            resource.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateBookCheckout(newBookCheckout.get().getBookCheckoutId())).withRel("Extend due date by seven days"));
+            return new ResponseEntity<>(resource, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
     @PutMapping("/{bookCheckoutId}")
     public ResponseEntity<?> updateBookCheckout(@PathVariable("bookCheckoutId") final String bookCheckoutId) {
         log.info("Received a request to update the dueDate by seven days for bookCheckoutId={}", bookCheckoutId);
@@ -103,5 +118,16 @@ public class BookCheckoutController {
         log.info("Received a request to delete a bookCheckout with bookCheckoutId={}", bookCheckoutId);
         val result = bookService.deleteBookCheckout(bookCheckoutId);
         return (result) ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Resource was not found", HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/overDueCharge")
+    public ResponseEntity<?> runChargeOnDueBooks() {
+        log.info("[OVERDUE CHARGE] Received a request to manually charge fee on all due books");
+
+        boolean isSuccess = bookService.chargeForOverDueBooks();
+        if (isSuccess) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

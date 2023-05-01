@@ -1,0 +1,21 @@
+
+
+
+
+ create a query that will return all overdue books
+    //@Query()
+
+ Optional<BookCheckout> findAll
+ check out https://www.liquibase.org/
+ check out how to deploy on AWS and terraform
+
+ API
+    + gives a response as client is waiting for a response
+    - chokes on high traffic
+        - failing requests
+        - block connections
+ Event Driven with Queues
+    + if service goes down:
+        - fault-tolerant
+    + messages sit on queue and will process them eventually
+
